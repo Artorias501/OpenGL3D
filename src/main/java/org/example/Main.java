@@ -59,7 +59,7 @@ public class Main {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
 
         glBindVertexArray(0);
@@ -71,7 +71,7 @@ public class Main {
         int vbo2 = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo2);
         glBufferData(GL_ARRAY_BUFFER, vertices2, GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
 
         glBindVertexArray(0);
@@ -94,7 +94,7 @@ public class Main {
         int rectVbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, rectVbo);
         glBufferData(GL_ARRAY_BUFFER, rectVertices, GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
 
         int rectEbo = glGenBuffers();
@@ -104,7 +104,6 @@ public class Main {
         glBindVertexArray(0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 
 
         System.out.println("正在编译着色器...");
@@ -139,6 +138,7 @@ public class Main {
         glDeleteShader(fragmentShader);
 
 
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         int cnt = 0;
         int curVao = vao;
         while (!glfwWindowShouldClose(window)) {
@@ -147,23 +147,6 @@ public class Main {
             glClearColor(0.1f, 0.15f, 0.2f, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // 三角形
-            glBindVertexArray(curVao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            ++cnt;
-            if(cnt>200) {
-                if (curVao == vao)
-                    curVao = vao2;
-                else
-                    curVao = vao;
-                cnt = 0;
-            }
-
-            // 矩形
-            glBindVertexArray(rectVao);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
@@ -171,6 +154,7 @@ public class Main {
         // 释放回调
         framebufferSizeCallback.free();
 
+        glDeleteProgram(shaderProgram);
         glfwDestroyWindow(window);
         glfwTerminate();
     }
