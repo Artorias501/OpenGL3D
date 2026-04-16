@@ -41,6 +41,7 @@ public class Main {
         System.out.println("显卡: " + glGetString(GL_RENDERER));
 
         // temp
+        // 两个三角形
         float[] vertices = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
@@ -75,6 +76,36 @@ public class Main {
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        // 一个矩形，采用EBO绘制
+        float[] rectVertices = {
+                -0.5f, 0.8f, 0.0f,   // 右上角
+                -0.5f, 0.5f, 0.0f,  // 右下角
+                -0.8f, 0.5f, 0.0f, // 左下角
+                -0.8f, 0.8f, 0.0f   // 左上角
+        };
+        int[] rectIndices = {
+                0, 1, 2,
+                0, 2, 3
+        };
+        int rectVao = glGenVertexArrays();
+        glBindVertexArray(rectVao);
+
+        int rectVbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, rectVbo);
+        glBufferData(GL_ARRAY_BUFFER, rectVertices, GL_STATIC_DRAW);
+        glVertexAttribPointer(0,3, GL_FLOAT, false, 0, 0);
+        glEnableVertexAttribArray(0);
+
+        int rectEbo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEbo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, rectIndices, GL_STATIC_DRAW);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
 
         System.out.println("正在编译着色器...");
         int vertexShader = 0;
@@ -116,19 +147,25 @@ public class Main {
             glClearColor(0.1f, 0.15f, 0.2f, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // 三角形
             glBindVertexArray(curVao);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
-            glfwSwapBuffers(window);
-            glfwPollEvents();
             ++cnt;
-            if(cnt>200){
-                if(curVao == vao)
+            if(cnt>200) {
+                if (curVao == vao)
                     curVao = vao2;
                 else
                     curVao = vao;
-                cnt=0;
+                cnt = 0;
             }
+
+            // 矩形
+            glBindVertexArray(rectVao);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
         }
 
         // 释放回调
