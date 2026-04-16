@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // LWJGL 核心
+    implementation platform('org.lwjgl:lwjgl-bom:3.3.3')
+
+    // 你需要的模块
+    implementation 'org.lwjgl:lwjgl'
+    implementation 'org.lwjgl:lwjgl-glfw'    // 窗口 = SDL/GLFW
+    implementation 'org.lwjgl:lwjgl-opengl' // OpenGL = GLEW + GL
+
+    // 自动适配 Windows/Linux 运行库
+    runtimeOnly 'org.lwjgl:lwjgl-glfw::natives-linux'
+    runtimeOnly 'org.lwjgl:lwjgl-opengl::natives-linux'
+    runtimeOnly 'org.lwjgl:lwjgl::natives-linux'
+
+    runtimeOnly 'org.lwjgl:lwjgl-glfw::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl-opengl::natives-windows'
+    runtimeOnly 'org.lwjgl:lwjgl::natives-windows'
+}
+
+test {
+    useJUnitPlatform()
+}
