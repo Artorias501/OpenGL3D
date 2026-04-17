@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class ShaderHandler {
     static public int compileShaderFromFile(String fileName, int shaderType) {
-        // 读取shader文件
         String content = FileHandler.readFile(fileName);
 
         int shader = glCreateShader(shaderType);

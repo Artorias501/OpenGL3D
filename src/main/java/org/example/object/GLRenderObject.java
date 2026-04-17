@@ -1,21 +1,15 @@
 package org.example.object;
 
-import org.example.object.base.Object;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL33.*;
 
 public class GLRenderObject {
-
-
-    // 渲染资源
     private int shaderProgram;
+    private List<GLMesh> meshes = new ArrayList<GLMesh>();
 
-    // 模型数据
-    private Object object;
-
-    public GLRenderObject(Object object) {
-        this.object = new Object(object);
-    }
+    // TODO
 
     public void setShaderProgram(int shaderProgram) {
         this.shaderProgram = shaderProgram;

@@ -4,18 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mesh {
-    public List<Vertex> vertices = new ArrayList<>();
-    public List<Integer> indices = new ArrayList<>();
+    Vertex[] vertices;
+    int[] indices;
 
     public Mesh() {
     }
 
-    public Mesh(Mesh mesh) {
-        vertices = new ArrayList<>();
-        for (Vertex vertex : mesh.vertices) {
-            vertices.add(new Vertex(vertex));
-        }
+    public Mesh(Vertex[] vertices, int[] indices) {
+        this.vertices = vertices;
+        this.indices = indices;
+    }
 
-        indices = new ArrayList<>(mesh.indices);
+    public Mesh(Mesh mesh) {
+        vertices = new Vertex[mesh.vertices.length];
+        System.arraycopy(mesh.vertices, 0, vertices, 0, mesh.vertices.length);
+
+        indices = new int[mesh.indices.length];
+        System.arraycopy(mesh.indices, 0, indices, 0, mesh.indices.length);
+    }
+
+    public Vertex[] getVertices() {
+        return vertices;
+    }
+
+    public int[] getIndices() {
+        return indices;
     }
 }
