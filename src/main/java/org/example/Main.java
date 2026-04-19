@@ -126,7 +126,17 @@ public class Main {
         Mesh mesh = new Mesh(vertices, indices);
         GLMesh glMesh = new GLMesh(mesh);
         GLRenderObject obj = new GLRenderObject(shaderProgram);
-        obj.addMesh(glMesh);
+        obj.meshes.add(glMesh);
+        obj.meshIndices.add(0);
+        obj.meshIndices.add(0);
+        Transform t0 = new Transform();
+        t0.setPosition(-0.5f, -0.5f, 0);
+        t0.setScale(0.5f, 0.5f, 0.5f);
+        Transform t1 = new Transform();
+        t1.setPosition(0.5f, 0.5f, 0);
+        t1.setScale(0.5f, 0.5f, 0.5f);
+        obj.meshTransforms.add(t0);
+        obj.meshTransforms.add(t1);
 
         while (!glfwWindowShouldClose(window)) {
             InputHandler.handleInput(window);
@@ -134,14 +144,22 @@ public class Main {
             glClearColor(0.1f, 0.15f, 0.2f, 1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-                obj.getTransform().addRotation(0, 0.1f, 0);
-            if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-                obj.getTransform().addRotation(0, -0.1f, 0);
-            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-                obj.getTransform().addRotation(0.1f, 0, 0);
-            if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-                obj.getTransform().addRotation(-0.1f, 0, 0);
+            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+                obj.meshTransforms.get(0).addRotation(0, 0.1f, 0);
+                obj.meshTransforms.get(1).addRotation(0, 0.1f, 0);
+            }
+            if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+                obj.meshTransforms.get(0).addRotation(0, -0.1f, 0);
+                obj.meshTransforms.get(1).addRotation(0, -0.1f, 0);
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                obj.meshTransforms.get(0).addRotation(0.1f, 0, 0);
+                obj.meshTransforms.get(1).addRotation(0.1f, 0, 0);
+            }
+            if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                obj.meshTransforms.get(0).addRotation(-0.1f, 0, 0);
+                obj.meshTransforms.get(1).addRotation(-0.1f, 0, 0);
+            }
 
             obj.render();
 

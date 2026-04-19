@@ -9,27 +9,22 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class GLRenderObject {
     private int shaderProgram;
-    private List<GLMesh> meshes = new ArrayList<GLMesh>();
-    private Transform transform = new Transform();
-    private int modelLocation;
+    public List<GLMesh> meshes = new ArrayList<>();
+    public Transform transform = new Transform();
+    private int transformLoc;
+    public List<Integer> meshIndices = new ArrayList<>();
+    public List<Transform> meshTransforms = new ArrayList<>();
 
     public GLRenderObject(int shaderProgram) {
         this.shaderProgram = shaderProgram;
-        modelLocation = glGetUniformLocation(shaderProgram, "model");
-    }
-
-    public void addMesh(GLMesh mesh) {
-        meshes.add(mesh);
-    }
-
-    public Transform getTransform() {
-        return transform;
+        transformLoc = glGetUniformLocation(shaderProgram, "model");
     }
 
     public void render() {
         glUseProgram(shaderProgram);
-        glUniformMatrix4fv(modelLocation, false, transform.getModelMatrix());
-        for (GLMesh mesh : meshes)
-            mesh.render();
+        for (int i = 0; i < meshIndices.size(); i++) {
+            glUniformMatrix4fv(transformLoc, false, meshTransforms.get(i).getModelMatrix());
+            meshes.get(meshIndices.get(i)).render();
+        }
     }
 }
