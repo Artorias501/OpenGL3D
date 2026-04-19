@@ -30,16 +30,12 @@ public class Transform {
     }
 
     public void setPosition(float x, float y, float z) {
-        position.x = x;
-        position.y = y;
-        position.z = z;
+        position.set(x, y, z);
         updateModelMatrix();
     }
 
     public void addPosition(float x, float y, float z) {
-        position.x += x;
-        position.y += y;
-        position.z += z;
+        position.add(x, y, z);
         updateModelMatrix();
     }
 
@@ -47,9 +43,7 @@ public class Transform {
 //        rotation.x = x % Math.PI_TIMES_2_f;
 //        rotation.y = y% Math.PI_TIMES_2_f;
 //        rotation.z = z% Math.PI_TIMES_2_f;
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
+        rotation.set(x, y, z);
         updateModelMatrix();
     }
 
@@ -57,23 +51,17 @@ public class Transform {
 //        rotation.x = (rotation.x + x)%Math.PI_TIMES_2_f;
 //        rotation.y = (rotation.x + y)%Math.PI_TIMES_2_f;
 //        rotation.z = (rotation.x + z)%Math.PI_TIMES_2_f;
-        rotation.x += x;
-        rotation.y += y;
-        rotation.z += z;
+        rotation.add(x, y, z);
         updateModelMatrix();
     }
 
     public void setScale(float x, float y, float z) {
-        scale.x = x;
-        scale.y = y;
-        scale.z = z;
+        scale.set(x, y, z);
         updateModelMatrix();
     }
 
     public void addScale(float x, float y, float z) {
-        scale.x += x;
-        scale.y += y;
-        scale.z += z;
+        scale.add(x, y, z);
         updateModelMatrix();
     }
 

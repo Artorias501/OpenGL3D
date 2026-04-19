@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.handler.ShaderHandler;
+import org.example.object.Camera;
 import org.example.object.GLMesh;
 import org.example.object.GLRenderObject;
 import org.example.object.base.Mesh;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.opengl.GL33.*;
 
@@ -29,15 +31,20 @@ public class Main {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        long window = glfwCreateWindow(800, 600, "OpenGL3D", NULL, NULL);
+
+        Camera camera = new Camera();
+        camera.setPosition(0, 0, 200);
+
+        long window = glfwCreateWindow(camera.getWidth(), camera.getHeight(), "OpenGL3D", NULL, NULL);
         GLCheck.checkNULL(window, "窗口创建失败");
         glfwMakeContextCurrent(window);
         GL.createCapabilities(); // 自动加载所有OpenGL函数
         glEnable(GL_DEPTH_TEST); // 开启深度测试
-        glViewport(0, 0, 800, 600); // 设置视口大小
+        glViewport(0, 0, camera.getWidth(), camera.getHeight()); // 设置视口大小
         GLFWFramebufferSizeCallback framebufferSizeCallback = GLFWFramebufferSizeCallback.create(
                 (win, width, height) -> {
                     glViewport(0, 0, width, height);
+                    camera.setWH(width, height);
                 }
         );
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
@@ -83,35 +90,35 @@ public class Main {
         // 一个方块
         Vertex[] vertices = new Vertex[]{
                 new Vertex(
-                        new Vector3f(-0.5f, -0.5f, -0.5f),
+                        new Vector3f(-100f, -100f, -100f),
                         new Vector3f(1, 0, 0)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, 0.5f, -0.5f),
+                        new Vector3f(-100f, 100f, -100f),
                         new Vector3f(0, 1, 0)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, 0.5f, -0.5f),
+                        new Vector3f(100f, 100f, -100f),
                         new Vector3f(0, 0, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, -0.5f, -0.5f),
+                        new Vector3f(100f, -100f, -100f),
                         new Vector3f(1, 1, 0)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, -0.5f, 0.5f),
+                        new Vector3f(-100f, -100f, 100f),
                         new Vector3f(1, 0, 1)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, 0.5f, 0.5f),
+                        new Vector3f(-100f, 100f, 100f),
                         new Vector3f(0, 1, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, 0.5f, 0.5f),
+                        new Vector3f(100f, 100f, 100f),
                         new Vector3f(1, 1, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, -0.5f, 0.5f),
+                        new Vector3f(100f, -100f, 100f),
                         new Vector3f(0, 0, 0)
                 )
         };
@@ -128,15 +135,18 @@ public class Main {
         GLRenderObject obj = new GLRenderObject(shaderProgram);
         obj.meshes.add(glMesh);
         obj.meshIndices.add(0);
-        obj.meshIndices.add(0);
+//        obj.meshIndices.add(0);
         Transform t0 = new Transform();
-        t0.setPosition(-0.5f, -0.5f, 0);
-        t0.setScale(0.5f, 0.5f, 0.5f);
-        Transform t1 = new Transform();
-        t1.setPosition(0.5f, 0.5f, 0);
-        t1.setScale(0.5f, 0.5f, 0.5f);
+        t0.setPosition(0f, 0f, 0);
+        t0.setScale(1f, 1f, 1f);
+//        Transform t1 = new Transform();
+//        t1.setPosition(0.5f, 0.5f, 0);
+//        t1.setScale(0.5f, 0.5f, 0.5f);
         obj.meshTransforms.add(t0);
-        obj.meshTransforms.add(t1);
+//        obj.meshTransforms.add(t1);
+
+        int viewMatrixLoc = glGetUniformLocation(shaderProgram, "view");
+        int projectionMatrixLoc = glGetUniformLocation(shaderProgram, "projection");
 
         while (!glfwWindowShouldClose(window)) {
             InputHandler.handleInput(window);
@@ -144,23 +154,39 @@ public class Main {
             glClearColor(0.1f, 0.15f, 0.2f, 1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            glUniformMatrix4fv(viewMatrixLoc, false, camera.getViewMatrix());
+            glUniformMatrix4fv(projectionMatrixLoc, false, camera.getProjectionMatrix());
+
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                camera.moveForward(1f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                camera.moveForward(-1f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                camera.moveRight(-1f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                camera.moveRight(1f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+                camera.moveUp(1f);
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                camera.moveUp(-1f);
+            }
             if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-                obj.meshTransforms.get(0).addRotation(0, 0.1f, 0);
-                obj.meshTransforms.get(1).addRotation(0, 0.1f, 0);
+                camera.rotate(0, 0.01f);
             }
             if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-                obj.meshTransforms.get(0).addRotation(0, -0.1f, 0);
-                obj.meshTransforms.get(1).addRotation(0, -0.1f, 0);
-            }
-            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-                obj.meshTransforms.get(0).addRotation(0.1f, 0, 0);
-                obj.meshTransforms.get(1).addRotation(0.1f, 0, 0);
+                camera.rotate(0, -0.01f);
             }
             if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-                obj.meshTransforms.get(0).addRotation(-0.1f, 0, 0);
-                obj.meshTransforms.get(1).addRotation(-0.1f, 0, 0);
+                camera.rotate(0.01f, 0);
             }
-
+            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                camera.rotate(-0.01f, 0);
+            }
             obj.render();
 
             glfwSwapBuffers(window);
