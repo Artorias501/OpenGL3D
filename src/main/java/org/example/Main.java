@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.handler.ShaderHandler;
 import org.example.object.GLMesh;
+import org.example.object.GLRenderObject;
 import org.example.object.base.Mesh;
 import org.example.object.base.Transform;
 import org.example.object.base.Vertex;
@@ -16,6 +17,7 @@ import org.lwjgl.opengl.GL20;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -81,35 +83,35 @@ public class Main {
         // 一个方块
         Vertex[] vertices = new Vertex[]{
                 new Vertex(
-                        new Vector3f(-0.5f, -0.5f, 0.1f),
+                        new Vector3f(-0.5f, -0.5f, -0.5f),
                         new Vector3f(1, 0, 0)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, 0.5f, 0.1f),
+                        new Vector3f(-0.5f, 0.5f, -0.5f),
                         new Vector3f(0, 1, 0)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, 0.5f, 0.1f),
+                        new Vector3f(0.5f, 0.5f, -0.5f),
                         new Vector3f(0, 0, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, -0.5f, 0.1f),
+                        new Vector3f(0.5f, -0.5f, -0.5f),
                         new Vector3f(1, 1, 0)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, -0.5f, 0.6f),
+                        new Vector3f(-0.5f, -0.5f, 0.5f),
                         new Vector3f(1, 0, 1)
                 ),
                 new Vertex(
-                        new Vector3f(-0.5f, 0.5f, 0.6f),
+                        new Vector3f(-0.5f, 0.5f, 0.5f),
                         new Vector3f(0, 1, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, 0.5f, 0.6f),
+                        new Vector3f(0.5f, 0.5f, 0.5f),
                         new Vector3f(1, 1, 1)
                 ),
                 new Vertex(
-                        new Vector3f(0.5f, -0.5f, 0.6f),
+                        new Vector3f(0.5f, -0.5f, 0.5f),
                         new Vector3f(0, 0, 0)
                 )
         };
@@ -123,10 +125,8 @@ public class Main {
         };
         Mesh mesh = new Mesh(vertices, indices);
         GLMesh glMesh = new GLMesh(mesh);
-
-        Transform transform = new Transform();
-
-        int loc = glGetUniformLocation(shaderProgram, "model");
+        GLRenderObject obj = new GLRenderObject(shaderProgram);
+        obj.addMesh(glMesh);
 
         while (!glfwWindowShouldClose(window)) {
             InputHandler.handleInput(window);
@@ -135,17 +135,15 @@ public class Main {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-                transform.addRotation(0, 0.1f, 0);
+                obj.getTransform().addRotation(0, 0.1f, 0);
             if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-                transform.addRotation(0, -0.1f, 0);
+                obj.getTransform().addRotation(0, -0.1f, 0);
             if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-                transform.addRotation(0.1f, 0, 0);
+                obj.getTransform().addRotation(0.1f, 0, 0);
             if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-                transform.addRotation(-0.1f, 0, 0);
+                obj.getTransform().addRotation(-0.1f, 0, 0);
 
-            glUniformMatrix4fv(loc, false, transform.getModelMatrix());
-
-            glMesh.render();
+            obj.render();
 
             glfwSwapBuffers(window);
             glfwPollEvents();
