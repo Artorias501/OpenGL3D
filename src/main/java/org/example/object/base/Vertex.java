@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Vertex implements ToByteBuffer {
     public Vector3f position;
-    public Vector3f colors = new Vector3f(1, 1, 1);
+    public Vector3f colors = new Vector3f(0.6f, 0.6f, 0.6f);
     public Vector3f normals = new Vector3f(0, 0, 0);
     public Vector2f textureCoords = new Vector2f(0, 0);
 

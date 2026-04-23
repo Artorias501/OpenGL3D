@@ -1,9 +1,7 @@
 package org.example;
 
 import org.example.handler.ShaderHandler;
-import org.example.object.Camera;
-import org.example.object.GLMesh;
-import org.example.object.GLRenderObject;
+import org.example.object.*;
 import org.example.object.base.Mesh;
 import org.example.object.base.Transform;
 import org.example.object.base.Vertex;
@@ -64,6 +62,7 @@ public class Main {
             System.err.println("编译着色器失败:");
             System.err.println(e.getMessage());
         }
+        System.out.println("着色器编译完成");
 
         int shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);
@@ -138,20 +137,27 @@ public class Main {
                 0, 3, 4, 3, 4, 7,
                 4, 5, 6, 4, 6, 7
         };
-        Mesh mesh = new Mesh(vertices, indices);
-        GLMesh glMesh = new GLMesh(mesh);
-        GLRenderObject obj = new GLRenderObject(shaderProgram);
-        obj.meshes.add(glMesh);
-        obj.meshIndices.add(0);
-//        obj.meshIndices.add(0);
-        Transform t0 = new Transform();
-        t0.setPosition(0f, 0f, 0);
-        t0.setScale(1f, 1f, 1f);
-//        Transform t1 = new Transform();
-//        t1.setPosition(0.5f, 0.5f, 0);
-//        t1.setScale(0.5f, 0.5f, 0.5f);
-        obj.meshTransforms.add(t0);
-//        obj.meshTransforms.add(t1);
+
+//        Mesh mesh = new Mesh(vertices, indices);
+//        GLMesh glMesh = new GLMesh(mesh);
+//        GLRenderObject obj = new GLRenderObject(shaderProgram);
+//        obj.meshes.add(glMesh);
+//        Transform t0 = new Transform();
+//        t0.setPosition(0f, 0f, 0);
+//        t0.setScale(1f, 1f, 1f);
+//        obj.meshDrawCommands.add(new MeshDrawCommand(0, t0));
+
+        GLRenderObject obj = null;
+        try {
+            System.out.println("加载测试模型...");
+            obj = GLBFileReader.load("models/test_poly.glb", shaderProgram);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        System.out.println("测试模型加载完成");
+        obj.transform.setScale(100f, 100f, 100f);
+
 
         int viewMatrixLoc = glGetUniformLocation(shaderProgram, "view");
         int projectionMatrixLoc = glGetUniformLocation(shaderProgram, "projection");
@@ -209,7 +215,7 @@ public class Main {
         // 释放回调
         framebufferSizeCallback.free();
 
-        glMesh.cleanup();
+        obj.cleanup();
 
         glDeleteProgram(shaderProgram);
         glfwDestroyWindow(window);

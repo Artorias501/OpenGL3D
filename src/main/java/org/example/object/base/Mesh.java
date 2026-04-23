@@ -15,6 +15,11 @@ public class Mesh {
         this.indices = indices;
     }
 
+    public Mesh(List<Vertex> vertices, List<Integer> indices) {
+        this.vertices = vertices.toArray(new Vertex[0]);
+        this.indices = indices.stream().mapToInt(Integer::intValue).toArray();
+    }
+
     public Mesh(Mesh mesh) {
         vertices = new Vertex[mesh.vertices.length];
         System.arraycopy(mesh.vertices, 0, vertices, 0, mesh.vertices.length);

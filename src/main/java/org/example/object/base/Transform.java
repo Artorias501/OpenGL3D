@@ -2,7 +2,6 @@ package org.example.object.base;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Math;
 
 public class Transform {
 
@@ -10,23 +9,31 @@ public class Transform {
     private Vector3f position = new Vector3f(0, 0, 0);
     private Vector3f rotation = new Vector3f(0, 0, 0);
     private Vector3f scale = new Vector3f(1, 1, 1);
-    private float[] modelMatrix = new float[16]; // cache model matrix
+
+
+    private Matrix4f modelMatrix = new Matrix4f();
+    private float[] modelMatrixArray = new float[16]; // cache model matrix
 
     public Transform() {
-        new Matrix4f().identity().get(modelMatrix);
+        modelMatrix.identity();
     }
 
     public Transform(Transform transform) {
         this.position = new Vector3f(transform.position);
         this.rotation = new Vector3f(transform.rotation);
         this.scale = new Vector3f(1, 1, 1);
-        new Matrix4f().identity()
-                .translate(position)
-                .rotateY((float) Math.toRadians(rotation.y))
-                .rotateX((float) Math.toRadians(rotation.x))
-                .rotateZ((float) Math.toRadians(rotation.z))
-                .scale(scale)
-                .get(this.modelMatrix);
+        updateModelMatrix();
+    }
+
+    public Transform(Matrix4f matrix) {
+        position = new Vector3f();
+        rotation = new Vector3f();
+        scale = new Vector3f();
+
+        // 2. 矩阵分解 → 位置、旋转、缩放
+        matrix.getTranslation(position);   // 位置
+        matrix.getScale(scale);           // 缩放
+        matrix.getEulerAnglesXYZ(rotation);    // 旋转（欧拉角 XYZ 顺序）
     }
 
     public void setPosition(float x, float y, float z) {
@@ -65,17 +72,21 @@ public class Transform {
         updateModelMatrix();
     }
 
-    public float[] getModelMatrix() {
+    public Matrix4f getModelMatrix() {
         return modelMatrix;
     }
 
+    public float[] getModelMatrixArray() {
+        return modelMatrixArray;
+    }
+
     private void updateModelMatrix() {
-        new Matrix4f().identity()
+        modelMatrix.identity()
                 .translate(position)
                 .rotateY(rotation.y)
                 .rotateX(rotation.x)
                 .rotateZ(rotation.z)
                 .scale(scale)
-                .get(this.modelMatrix);
+                .get(this.modelMatrixArray);
     }
 }

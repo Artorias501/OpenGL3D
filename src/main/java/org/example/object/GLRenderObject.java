@@ -1,6 +1,7 @@
 package org.example.object;
 
 import org.example.object.base.Transform;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,9 @@ public class GLRenderObject {
     public List<GLMesh> meshes = new ArrayList<>();
     public Transform transform = new Transform();
     private int transformLoc;
-    public List<Integer> meshIndices = new ArrayList<>();
-    public List<Transform> meshTransforms = new ArrayList<>();
+    private float[] transformCache = new float[16];
+
+    public List<MeshDrawCommand> meshDrawCommands = new ArrayList<>();
 
     public GLRenderObject(int shaderProgram) {
         this.shaderProgram = shaderProgram;
@@ -22,9 +24,20 @@ public class GLRenderObject {
 
     public void render() {
         glUseProgram(shaderProgram);
-        for (int i = 0; i < meshIndices.size(); i++) {
-            glUniformMatrix4fv(transformLoc, false, meshTransforms.get(i).getModelMatrix());
-            meshes.get(meshIndices.get(i)).render();
+        for (MeshDrawCommand meshDrawCommand : meshDrawCommands) {
+            Matrix4f finalTransform = new Matrix4f();
+            transform.getModelMatrix().mul(meshDrawCommand.meshTransform.getModelMatrix(), finalTransform);
+            finalTransform.get(transformCache);
+
+            glUniformMatrix4fv(transformLoc, false, transformCache);
+            meshes.get(meshDrawCommand.meshIndex).render();
         }
+    }
+
+    public void cleanup() {
+        for (GLMesh mesh : meshes)
+            mesh.cleanup();
+
+        meshDrawCommands.clear();
     }
 }
