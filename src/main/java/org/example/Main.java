@@ -91,35 +91,43 @@ public class Main {
         Vertex[] vertices = new Vertex[]{
                 new Vertex(
                         new Vector3f(-100f, -100f, -100f),
-                        new Vector3f(1, 0, 0)
+                        new Vector3f(1, 0, 0),
+                        new Vector3f(-100f, -100f, -100f)
                 ),
                 new Vertex(
                         new Vector3f(-100f, 100f, -100f),
-                        new Vector3f(0, 1, 0)
+                        new Vector3f(0, 1, 0),
+                        new Vector3f(-100f, 100f, -100f)
                 ),
                 new Vertex(
                         new Vector3f(100f, 100f, -100f),
-                        new Vector3f(0, 0, 1)
+                        new Vector3f(0, 0, 1),
+                        new Vector3f(100f, 100f, -100f)
                 ),
                 new Vertex(
                         new Vector3f(100f, -100f, -100f),
-                        new Vector3f(1, 1, 0)
+                        new Vector3f(1, 1, 0),
+                        new Vector3f(100f, -100f, -100f)
                 ),
                 new Vertex(
                         new Vector3f(-100f, -100f, 100f),
-                        new Vector3f(1, 0, 1)
+                        new Vector3f(1, 0, 1),
+                        new Vector3f(-100f, -100f, 100f)
                 ),
                 new Vertex(
                         new Vector3f(-100f, 100f, 100f),
-                        new Vector3f(0, 1, 1)
+                        new Vector3f(0, 1, 1),
+                        new Vector3f(-100f, 100f, 100f)
                 ),
                 new Vertex(
                         new Vector3f(100f, 100f, 100f),
-                        new Vector3f(1, 1, 1)
+                        new Vector3f(1, 1, 1),
+                        new Vector3f(100f, 100f, 100f)
                 ),
                 new Vertex(
                         new Vector3f(100f, -100f, 100f),
-                        new Vector3f(0, 0, 0)
+                        new Vector3f(0, 0, 0),
+                        new Vector3f(100f, -100f, 100f)
                 )
         };
         int[] indices = {
@@ -147,6 +155,11 @@ public class Main {
 
         int viewMatrixLoc = glGetUniformLocation(shaderProgram, "view");
         int projectionMatrixLoc = glGetUniformLocation(shaderProgram, "projection");
+
+        // 环境光
+        Vector3f directLight = new Vector3f(1, 1, -1);
+        int directLightLoc = glGetUniformLocation(shaderProgram, "directLight");
+        glUniform3f(directLightLoc, directLight.x, directLight.y, directLight.z);
 
         while (!glfwWindowShouldClose(window)) {
             InputHandler.handleInput(window);
