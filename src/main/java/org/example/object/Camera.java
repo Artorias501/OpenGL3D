@@ -1,9 +1,8 @@
 package org.example.object;
 
+import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import java.awt.event.ActionEvent;
 
 public class Camera {
     private Vector3f position = new Vector3f(0, 0, 0);
@@ -16,6 +15,8 @@ public class Camera {
     private int height = 600;
     private float near = 0.1f;
     private float far = 10000f;
+    private float fov = Math.toRadians(60);
+    private boolean isOrtho = true;
     private float[] projectionMatrix = new float[16];
 
     public Camera() {
@@ -85,6 +86,25 @@ public class Camera {
         updateProjectionMatrix();
     }
 
+    public float getFOV() {
+        return fov;
+    }
+
+    public void setFOV(float fov) {
+        this.fov = fov;
+        updateProjectionMatrix();
+    }
+
+    public void switchToOrtho() {
+        isOrtho = true;
+        updateProjectionMatrix();
+    }
+
+    public void switchToPerspective() {
+        isOrtho = false;
+        updateProjectionMatrix();
+    }
+
     public float[] getViewMatrix() {
         return viewMatrx;
     }
@@ -104,10 +124,26 @@ public class Camera {
     }
 
     private void updateProjectionMatrix() {
+        if (isOrtho)
+            updateOrtho();
+        else
+            updatePerspective();
+    }
+
+    private void updateOrtho() {
         new Matrix4f().identity().ortho(
                 -width / 2f, width / 2f,
                 -height / 2f, height / 2f,
                 near, far
+        ).get(projectionMatrix);
+    }
+
+    private void updatePerspective() {
+        new Matrix4f().identity().perspective(
+                fov,
+                (float) width / height,
+                near,
+                far
         ).get(projectionMatrix);
     }
 }

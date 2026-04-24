@@ -2,8 +2,6 @@ package org.example;
 
 import org.example.handler.ShaderHandler;
 import org.example.object.*;
-import org.example.object.base.Mesh;
-import org.example.object.base.Transform;
 import org.example.object.base.Vertex;
 import org.example.util.GLCheck;
 import org.joml.Vector3f;
@@ -15,8 +13,6 @@ import org.lwjgl.opengl.GL20;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
@@ -32,6 +28,7 @@ public class Main {
 
         Camera camera = new Camera();
         camera.setPosition(0, 0, 200);
+        camera.switchToPerspective();
 
         long window = glfwCreateWindow(camera.getWidth(), camera.getHeight(), "OpenGL3D", NULL, NULL);
         GLCheck.checkNULL(window, "窗口创建失败");
