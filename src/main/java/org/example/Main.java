@@ -150,7 +150,7 @@ public class Main {
         GLRenderObject obj = null;
         try {
             System.out.println("加载测试模型...");
-            obj = GLBFileReader.load("models/test_poly.glb", shaderProgram);
+            obj = GLBFileReader.load("models/test2.glb", shaderProgram);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(1);

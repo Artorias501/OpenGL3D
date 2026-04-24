@@ -21,7 +21,8 @@ public class GLBFileReader {
                 aiProcess_Triangulate |
                         aiProcess_FlipUVs |
                         aiProcess_GenNormals |
-                        aiProcess_CalcTangentSpace
+                        aiProcess_CalcTangentSpace |
+                        aiProcess_PreTransformVertices
         );
         if (scene == null || scene.mRootNode() == null)
             throw new RuntimeException("glb load error: " + aiGetErrorString());
